@@ -4,7 +4,16 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// Avoid minified React error in PlayCanvas
+let root = document.getElementById('root');
+if (!root) {
+  root = document.createElement('div');
+  root.id = 'root';
+  root.style = 'position: absolute;';
+  document.body.appendChild(root);
+}
+
+ReactDOM.render(<App />, root);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
