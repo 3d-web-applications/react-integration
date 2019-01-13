@@ -42,5 +42,6 @@ The react-scripts package provided by Create React App requires a dependency:
 + }
 + ReactDOM.render(<App />, root);
 ```
-15. Now upload <i>dist/main.js</i> into your PlayCanvas project and make sure that it is set to the beginning of the script loading order. 
+15. Now upload <i>dist/main.js</i> into your PlayCanvas project and make sure that it is set to the beginning of the script loading order.
+16. Update your .gitignore file, to prevent file uploads from your <i>dist</i> folder. 
 
