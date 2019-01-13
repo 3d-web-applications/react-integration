@@ -44,5 +44,60 @@ The react-scripts package provided by Create React App requires a dependency:
 14. Now upload <i>dist/main.js</i> into your PlayCanvas project and make sure that it is set to the beginning of the script loading order.
 15. Update your .gitignore file, to prevent file uploads from your <i>dist</i> folder.
 
-Please note that there are still some things to do. For instance .svg files cannot be displayed yet and mouse/touch events will be catched by the UI, which means that you cannot interact with your scene anymore. I will describe a solution later this day.
+## Thoughts about resource handling.
+To display images which are referenced in <i>dist/main.js</i> build, we have multiple options.
+
+### svg-inline-loader
+To display the default React logo, which is an .svg file, we could add the following package to our <i>devDependencies:</i> in <i>package.json</i>. Open a terminal and enter: <i>npm install svg-inline-loader --save-dev</i>. Furthermore another rule must be added to webpack.config.js:
+```javascript
+{
+  test: /\.svg$/,
+  loader: 'svg-inline-loader',
+},
+```
+Moreover we have to explicitly mention the usage of <i>inline-svg</i> by adding the prefix <i>data:image/svg+xml;utf8,</i> to ${logo} in App.js. The result could look like this one:
+```javascript
+const img = `data:image/svg+xml;utf8,${logo}`;
+return (
+  <div className="App">
+    <header className="App-header">
+      <img src={img} className="App-logo" alt="logo" />
+      <p>
+      ...
+```
+Now we can see the logo when launching the PlayCanvas app. Unfortunately, the image is not displayed anymore when executing <i>npm start</i>.
+
+### file-loader
+Working with <i>file-loader</i> instead of using <i>svg-inline-loader</i>, was even less successful.
+
+### Using PNG files
+Using .png files instead of .svg files, seems to be a good workaround! But now you have to upload those files into your PlayCanvas project, too. They become available under
+```
+https://playcanvas.com/editor/scene/<SCENE_ID>/files/assets/1/<ASSET_ID>/logo.png
+```
+But when you launch the the application, after replacing the build file, 	&lt;img src= points to
+```
+https://launch.playcanvas.com/<SCENE_ID>/logo.png
+```
+This url cannot be resolved, which means no image will be presented. You could add a custom logic, observing window.location.href to make decisions about the real resource path. But this would also mean, that the workaround will always exist inside the application.
+
+### url-loader
+At the moment <i>npm install url-loader --save-dev</i> seems to be the best solution. Like in (1) we have to add another rule to webpack.config.js. Furthermore we need to set the limit to any value greater than the largest file size. Otherwise some images will not be transformed into base64, which will end in the same problem, as described in (3).
+```javascript
+{
+  test: /\.(jpg|png|gif|svg)$/,
+  use: {
+    loader: 'url-loader',
+    options: {
+      limit: 640000,
+    }
+  },
+},
+```
+
+### Using external services
+Another solution is to upload images, etc. onto another URL, to become available for PlayCanvas applications. But this makes only sense, when you plan to use a content delivery network (CDN) during the development and also in production. 
+
+## Notes
+Please note that there are still some things to do. For instance we need to provide a custom logic to catch some mouse/touch events in the UI, while others should be passed to the scene, to allow navigating the camera, etc.
 
