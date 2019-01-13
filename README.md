@@ -15,10 +15,9 @@ Guide to integrating React in PlayCanvas projects
 7. Create webpack.config.js
 8. Create .babelrc
 9. <i>npm install babel-plugin-transform-react-jsx --save</i>
-10. <i>npm install html-webpack-plugin --save-dev</i>
-11. <i>npm install svg-inline-loader --save-dev</i>
-12. <i>npm install css-loader --save-dev</i>
-13. Extend the scripts section in package.json and run <i>npm start</i> again
+10. <i>npm install svg-inline-loader --save-dev</i>
+11. <i>npm install css-loader --save-dev</i>
+12. Extend the scripts section in package.json and run <i>npm start</i> again
 Probably you cannot start the application anymore. Instead you will receive a message in your terminal, similar to the message below. If that happens, you need to downgrade your webpack package with <i>npm install webpack@4.19.1 --save-dev</i>.
 ```
 There might be a problem with the project dependency tree.
@@ -30,7 +29,7 @@ The react-scripts package provided by Create React App requires a dependency:
 
 ...
 ```
-14. Before you can run your React app in PlayCanvas, you have to replace one line in your index.js.
+13. Before you can run your React app in PlayCanvas, you have to replace one line in your index.js.
 ```diff
 - ReactDOM.render(<App />, document.getElementById('root'));
 + let root = document.getElementById('root');
@@ -42,6 +41,8 @@ The react-scripts package provided by Create React App requires a dependency:
 + }
 + ReactDOM.render(<App />, root);
 ```
-15. Now upload <i>dist/main.js</i> into your PlayCanvas project and make sure that it is set to the beginning of the script loading order.
-16. Update your .gitignore file, to prevent file uploads from your <i>dist</i> folder. 
+14. Now upload <i>dist/main.js</i> into your PlayCanvas project and make sure that it is set to the beginning of the script loading order.
+15. Update your .gitignore file, to prevent file uploads from your <i>dist</i> folder.
+
+Please note that there are still some things to do. For instance .svg files cannot be displayed yet and mouse/touch events will be catched by the UI, which means that you cannot interact with your scene anymore. I will describe a solution later this day.
 
