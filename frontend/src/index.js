@@ -9,7 +9,7 @@ let root = document.getElementById('root');
 if (!root) {
   root = document.createElement('div');
   root.id = 'root';
-  root.style = 'position: absolute;';
+  root.style = 'position: absolute; visibility: hidden;';
   document.body.appendChild(root);
 }
 
