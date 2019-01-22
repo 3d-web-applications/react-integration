@@ -36,7 +36,7 @@ The react-scripts package provided by Create React App requires a dependency:
 + if (!root) {
 +   root = document.createElement('div');
 +   root.id = 'root';
-+   root.style = 'position: absolute;';
++   root.style = 'position: absolute; visibility: hidden;';
 +   document.body.appendChild(root);
 + }
 + ReactDOM.render(<App />, root);
@@ -115,8 +115,6 @@ if (!root) {
 ```javascript
 var UiLoader = pc.createScript('UiLoader');
 
-UiLoader.prototype._ready = false;
-
 UiLoader.attributes.add('_css', {
     type: 'asset',
     assetType: 'css',
@@ -124,19 +122,19 @@ UiLoader.attributes.add('_css', {
     description: 'Stylesheet for React components',
 });
 
-UiLoader.prototype.postInitialize = function() {
-    var self = this;
-    
-    var style = pc.createStyle(this._css.resource);
-    style.onload = function() {
-        var root = document.getElementById('root');
-        root.style.visibility = 'visible';
-    };
-    
+UiLoader.prototype.initialize = function() {
+    var style = pc.createStyle(this._css.resource);    
     document.head.appendChild(style);
 };
+
+UiLoader.prototype.postInitialize = function() {
+    var root = document.getElementById('root');
+    root.style.visibility = 'visible';
+};
 ```
-Please note that I use the <i>postInitialize</i> function. When calling the code inside any <i>initialize</i> function, the root UI element could show up before the splashscreen is hiddem.
+The script above makes sure that React components will not be displayed while the splashscreen is shown. When the loading is over, it will display React components immediately. Please note that the script is not applicable for really small PlayCanvas applications. The postInitialize function might be completed before the stylesheet was fully loaded. A good starting point for extending the script might be to experiment with style.onload = function() {...}.
+
+Please also note, that your <i>webpack bundles (js-files)</i> as well as the <i>UiLoader script</i> should be moved to the top of the script loading order inside PlayCanvas. 
 
 The last step is to extract css from main.js
 1. <i>npm install mini-css-extract-plugin --save-dev</i>
